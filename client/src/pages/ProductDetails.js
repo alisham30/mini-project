@@ -1,36 +1,41 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { useCart } from "../context/CartContext";
 import axios from "axios";
 
 function ProductDetails() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState(null);
 
   useEffect(() => {
-    axios.get("http://localhost:5000/api/products/" + id)
+    axios.get(`http://localhost:5000/api/products/${id}`)
       .then(res => setProduct(res.data))
       .catch(err => console.error(err));
   }, [id]);
 
-  const addToCart = () => {
-    const token = localStorage.getItem("token");
-    axios.post("http://localhost:5000/api/cart/add", {
-      productId: id, quantity: 1
-    }, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).then(() => navigate("/cart"));
+  const handleAddToCart = () => {
+    if (product) {
+      addToCart({
+        id: product._id,
+        name: product.name,
+        price: product.price,
+        image: "http://localhost:5000/" + product.image
+      });
+    }
   };
 
   if (!product) return <div>Loading...</div>;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <img src={"http://localhost:5000/" + product.image} alt={product.name} style={{ width: 300 }} />
-      <h2>{product.name}</h2>
-      <p>{product.description}</p>
-      <p><strong>₹{product.price}</strong></p>
-      <button onClick={addToCart}>Add to Cart</button>
+    <div className="product-details">
+      <img src={"http://localhost:5000/" + product.image} alt={product.name} className="product-image" />
+      <div className="product-info">
+        <h2>{product.name}</h2>
+        <p className="description">{product.description}</p>
+        <p className="price"><strong>₹{product.price}</strong></p>
+        <button onClick={handleAddToCart} className="add-to-cart">Add to Cart</button>
+      </div>
     </div>
   );
 }

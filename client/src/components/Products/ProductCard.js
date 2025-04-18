@@ -1,14 +1,46 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import "./Products.css";
 
 function ProductCard({ product }) {
+  const handleAddToCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Please login to add items to cart");
+        return;
+      }
+
+      await axios.post("http://localhost:5000/api/cart/add", 
+        { productId: product._id, quantity: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      alert("Product added to cart!");
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      alert("Failed to add product to cart");
+    }
+  };
+
   return (
     <div className="product-card">
-      <img src={"http://localhost:5000/" + product.image} alt={product.name} />
-      <h3>{product.name}</h3>
-      <p>₹{product.price}</p>
-      <Link to={"/product/" + product._id}>View Details</Link>
+      <div className="product-image-container">
+        <img 
+          className="product-image" 
+          src={`http://localhost:5000/${product.image}`} 
+          alt={product.name} 
+        />
+      </div>
+      <div className="product-info">
+        <h3 className="product-name">{product.name}</h3>
+        <div className="product-price-cart">
+          <p className="product-price">₹{product.price}</p>
+          <button onClick={handleAddToCart} className="add-to-cart">Add to Cart</button>
+        </div>
+        <Link to={"/product/" + product._id} className="view-details">View Details</Link>
+      </div>
     </div>
   );
 }
