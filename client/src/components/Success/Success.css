@@ -1,0 +1,8 @@
+.success-container {
+  padding: 4rem;
+  text-align: center;
+  color: green;
+}
+.success-container h2 {
+  font-size: 2rem;
+}

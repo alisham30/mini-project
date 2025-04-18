@@ -1,0 +1,11 @@
+.checkout-container {
+  padding: 2rem;
+  text-align: center;
+}
+.checkout-container button {
+  padding: 10px 20px;
+  background-color: #2e8b57;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
